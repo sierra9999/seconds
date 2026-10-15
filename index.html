@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seconds Timer</title>
+<style>
+  body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #111; color: #fff; }
+  #display { font-size: 6rem; font-weight: bold; margin: 1rem 0; }
+  #display small { font-size: 1.5rem; color: #888; }
+  .buttons { display: flex; gap: 0.5rem; }
+  button { font-size: 1.1rem; padding: 0.6rem 1.2rem; border: none; border-radius: 8px; cursor: pointer; }
+  #startBtn { background: #22c55e; color: #fff; }
+  #stopBtn { background: #eab308; color: #000; }
+  #resetBtn { background: #3b82f6; color: #fff; }
+  #deleteBtn { background: #ef4444; color: #fff; }
+  button:disabled { opacity: 0.4; cursor: default; }
+</style>
+</head>
+<body>
+  <h1>Seconds Timer</h1>
+  <div id="display">0 <small>s</small></div>
+  <div class="buttons">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <button id="resetBtn">Reset</button>
+    <button id="deleteBtn">Delete</button>
+  </div>
+
+<script>
+  let seconds = 0;
+  let intervalId = null;
+  const display = document.getElementById('display');
+  const startBtn = document.getElementById('startBtn');
+  const stopBtn = document.getElementById('stopBtn');
+
+  function render() {
+    display.innerHTML = seconds + ' <small>s</small>';
+  }
+
+  function updateButtons() {
+    const running = intervalId !== null;
+    startBtn.disabled = running;
+    stopBtn.disabled = !running;
+  }
+
+  function start() {
+    if (intervalId !== null) return;
+    intervalId = setInterval(() => {
+      seconds++;
+      render();
+    }, 1000);
+    updateButtons();
+  }
+
+  function stop() {
+    clearInterval(intervalId);
+    intervalId = null;
+    updateButtons();
+  }
+
+  function reset() {
+    stop();
+    seconds = 0;
+    render();
+  }
+
+  function del() {
+    stop();
+    seconds = 0;
+    display.innerHTML = '-- <small>s</small>';
+  }
+
+  startBtn.addEventListener('click', () => {
+    // if display was deleted, restore from 0
+    if (display.textContent.trim().startsWith('--')) {
+      seconds = 0;
+    }
+    start();
+  });
+  stopBtn.addEventListener('click', stop);
+  document.getElementById('resetBtn').addEventListener('click', reset);
+  document.getElementById('deleteBtn').addEventListener('click', del);
+
+  render();
+  updateButtons();
+</script>
+</body>
+</html>
